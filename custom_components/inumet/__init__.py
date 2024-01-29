@@ -6,18 +6,17 @@ https://github.com/ludeeus/integration_blueprint
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
+from homeassistant.const import  Platform
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
-from .api import IntegrationBlueprintApiClient
-from .const import DOMAIN
+from .api import IntegrationBlueprintApiClient,INUMET
+from .const import DOMAIN, STATION, ZONE
 from .coordinator import BlueprintDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [
     Platform.SENSOR,
     Platform.BINARY_SENSOR,
-    Platform.SWITCH,
 ]
 
 
@@ -27,11 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coordinator = BlueprintDataUpdateCoordinator(
         hass=hass,
-        client=IntegrationBlueprintApiClient(
-            username=entry.data[CONF_USERNAME],
-            password=entry.data[CONF_PASSWORD],
-            session=async_get_clientsession(hass),
-        ),
+        client=await hass.async_add_executor_job(INUMET,entry.data[STATION],entry.data[ZONE]),
     )
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
     await coordinator.async_config_entry_first_refresh()

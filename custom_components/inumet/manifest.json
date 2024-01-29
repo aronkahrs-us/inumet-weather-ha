@@ -1,0 +1,13 @@
+{
+  "domain": "inumet",
+  "name": "Inumet",
+  "codeowners": [
+    "@aronkahrs-us"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/aronkahrs-us/inumet-weather-ha",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/aronkahrs-us/inumet-weather-ha/issues",
+  "version": "0.0.1",
+  "requirements": ["inumet_api==0.0.4"]
+}

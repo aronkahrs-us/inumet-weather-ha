@@ -1,6 +1,6 @@
 """Sample API Client."""
 from __future__ import annotations
-
+from inumet_api import INUMET
 import asyncio
 import socket
 

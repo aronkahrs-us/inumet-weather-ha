@@ -1,20 +1,19 @@
 """Adds config flow for Blueprint."""
 from __future__ import annotations
 
+import asyncio
+
 import voluptuous as vol
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.helpers import selector
-from homeassistant.helpers.aiohttp_client import async_create_clientsession
 
 from .api import (
     IntegrationBlueprintApiClient,
     IntegrationBlueprintApiClientAuthenticationError,
     IntegrationBlueprintApiClientCommunicationError,
     IntegrationBlueprintApiClientError,
+    INUMET
 )
-from .const import DOMAIN, LOGGER
-
+from .const import DOMAIN, LOGGER, STATION, ZONE
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
@@ -27,12 +26,16 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> config_entries.FlowResult:
         """Handle a flow initialized by the user."""
         _errors = {}
+        temp_client = await self.hass.async_add_executor_job(INUMET)
+        stations = await self.hass.async_add_executor_job(temp_client.estaciones)
+        zones = await self.hass.async_add_executor_job(temp_client.zonas)
         if user_input is not None:
             try:
                 await self._test_credentials(
-                    username=user_input[CONF_USERNAME],
-                    password=user_input[CONF_PASSWORD],
+                    station=user_input.get(STATION),
+                    zone=user_input.get(ZONE),
                 )
+
             except IntegrationBlueprintApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
@@ -44,7 +47,7 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 _errors["base"] = "unknown"
             else:
                 return self.async_create_entry(
-                    title=user_input[CONF_USERNAME],
+                    title=user_input[STATION],
                     data=user_input,
                 )
 
@@ -53,28 +56,18 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        CONF_USERNAME,
-                        default=(user_input or {}).get(CONF_USERNAME),
-                    ): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.TEXT
-                        ),
-                    ),
-                    vol.Required(CONF_PASSWORD): selector.TextSelector(
-                        selector.TextSelectorConfig(
-                            type=selector.TextSelectorType.PASSWORD
-                        ),
-                    ),
+                    STATION,
+                    ): vol.In([x['NombreEstacion'] for x in stations['estaciones']]),
+                    vol.Required(
+                    ZONE,
+                    ): vol.In([x['nombre'] for x in zones['zonas']]),
                 }
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, username: str, password: str) -> None:
+    async def _test_credentials(self, station: int, zone: int) -> None:
         """Validate credentials."""
-        client = IntegrationBlueprintApiClient(
-            username=username,
-            password=password,
-            session=async_create_clientsession(self.hass),
-        )
-        await client.async_get_data()
+        client = await self.hass.async_add_executor_job(INUMET,station,zone)
+        if not await self.hass.async_add_executor_job(client._test):
+            raise ValueError

@@ -15,6 +15,7 @@ from .api import (
     IntegrationBlueprintApiClient,
     IntegrationBlueprintApiClientAuthenticationError,
     IntegrationBlueprintApiClientError,
+    INUMET
 )
 from .const import DOMAIN, LOGGER
 
@@ -28,7 +29,7 @@ class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
     def __init__(
         self,
         hass: HomeAssistant,
-        client: IntegrationBlueprintApiClient,
+        client: INUMET,
     ) -> None:
         """Initialize."""
         self.client = client
@@ -42,7 +43,7 @@ class BlueprintDataUpdateCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         """Update data via library."""
         try:
-            return await self.client.async_get_data()
+            return await self.hass.async_add_executor_job(self.client.estado_actual)
         except IntegrationBlueprintApiClientAuthenticationError as exception:
             raise ConfigEntryAuthFailed(exception) from exception
         except IntegrationBlueprintApiClientError as exception:

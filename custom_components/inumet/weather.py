@@ -1,20 +1,27 @@
-"""Sensor platform for integration_blueprint."""
+"""Weather platform for Inumet."""
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+from homeassistant.components.weather import (
+    ATTR_FORECAST_CLOUD_COVERAGE,
+    ATTR_FORECAST_CONDITION,
+    ATTR_FORECAST_NATIVE_APPARENT_TEMP,
+    ATTR_FORECAST_NATIVE_PRECIPITATION,
+    ATTR_FORECAST_NATIVE_TEMP,
+    ATTR_FORECAST_NATIVE_TEMP_LOW,
+    ATTR_FORECAST_NATIVE_WIND_GUST_SPEED,
+    ATTR_FORECAST_NATIVE_WIND_SPEED,
+    ATTR_FORECAST_PRECIPITATION_PROBABILITY,
+    ATTR_FORECAST_TIME,
+    ATTR_FORECAST_UV_INDEX,
+    ATTR_FORECAST_WIND_BEARING,
+    Forecast,
+    SingleCoordinatorWeatherEntity,
+    WeatherEntityFeature,
+)
 
 from .const import DOMAIN
 from .coordinator import BlueprintDataUpdateCoordinator
 from .entity import IntegrationBlueprintEntity
-
-ENTITY_DESCRIPTIONS = (
-    SensorEntityDescription(
-        key="integration_blueprint",
-        name="Integration Sensor",
-        icon="mdi:format-quote-close",
-    ),
-)
-
 
 async def async_setup_entry(hass, entry, async_add_devices):
     """Set up the sensor platform."""
@@ -43,4 +50,4 @@ class IntegrationBlueprintSensor(IntegrationBlueprintEntity, SensorEntity):
     @property
     def native_value(self) -> str:
         """Return the native value of the sensor."""
-        return self.coordinator.data.get("body")
+        return self.coordinator.data.get("temperatura")
