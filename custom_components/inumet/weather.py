@@ -51,7 +51,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         self._attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
         self._attr_unique_id = f"WeatherInumet_{self.coordinator.data['estado'].get('id')}"
         self._attr_attribution = "Data provided by INUMET"
-        if self.coordinator.data['pronostico'] != None:
+        if len(self.coordinator.data['pronostico']) >= 0:
             self._attr_supported_features = WeatherEntityFeature.FORECAST_DAILY
 
     @property
@@ -163,12 +163,12 @@ class InumetWeather(InumetEntity, WeatherEntity):
         except:
             return STATE_UNAVAILABLE
 
-    def _forecast(self) -> list[Forecast] | None:
-        """Return the forecast array."""
+    async def async_forecast_daily(self) -> list[Forecast] | None:
+        """Return the daily forecast in native units."""
         try:
             if len(self.coordinator.data['pronostico']) <= 0:
                 return None
-            # remap keys from library to keys understood by the weather component
+
             return [
                 {
                     ATTR_FORECAST_TIME: item["fecha"],
@@ -180,8 +180,3 @@ class InumetWeather(InumetEntity, WeatherEntity):
             ]
         except:
             return STATE_UNAVAILABLE
-
-    @callback
-    def _async_forecast_daily(self) -> list[Forecast] | None:
-        """Return the daily forecast in native units."""
-        return self._forecast
