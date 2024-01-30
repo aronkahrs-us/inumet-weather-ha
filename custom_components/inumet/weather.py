@@ -163,8 +163,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         except:
             return STATE_UNAVAILABLE
 
-    @property
-    def forecast(self) -> list[Forecast] | None:
+    def _forecast(self) -> list[Forecast] | None:
         """Return the forecast array."""
         try:
             if len(self.coordinator.data['pronostico']) <= 0:
@@ -185,4 +184,4 @@ class InumetWeather(InumetEntity, WeatherEntity):
     @callback
     def _async_forecast_daily(self) -> list[Forecast] | None:
         """Return the daily forecast in native units."""
-        return self.forecast
+        return self._forecast
