@@ -1,19 +1,16 @@
 """Adds config flow for Blueprint."""
 from __future__ import annotations
 
-import asyncio
-
 import voluptuous as vol
 from homeassistant import config_entries
 
 from .api import (
-    IntegrationBlueprintApiClient,
-    IntegrationBlueprintApiClientAuthenticationError,
-    IntegrationBlueprintApiClientCommunicationError,
-    IntegrationBlueprintApiClientError,
+    InumetApiClientAuthenticationError,
+    InumetApiClientNoDataError,
+    InumetApiClientError,
     INUMET
 )
-from .const import DOMAIN, LOGGER, STATION, ZONE
+from .const import DOMAIN, LOGGER, STATION, DEPTO
 
 class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Blueprint."""
@@ -28,21 +25,21 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
         _errors = {}
         temp_client = await self.hass.async_add_executor_job(INUMET)
         stations = await self.hass.async_add_executor_job(temp_client.estaciones)
-        zones = await self.hass.async_add_executor_job(temp_client.zonas)
+        deptos = await self.hass.async_add_executor_job(temp_client.departamentos)
         if user_input is not None:
             try:
                 await self._test_credentials(
                     station=user_input.get(STATION),
-                    zone=user_input.get(ZONE),
+                    depto=user_input.get(DEPTO),
                 )
 
-            except IntegrationBlueprintApiClientAuthenticationError as exception:
+            except InumetApiClientAuthenticationError as exception:
                 LOGGER.warning(exception)
                 _errors["base"] = "auth"
-            except IntegrationBlueprintApiClientCommunicationError as exception:
+            except InumetApiClientNoDataError as exception:
                 LOGGER.error(exception)
-                _errors["base"] = "connection"
-            except IntegrationBlueprintApiClientError as exception:
+                _errors["base"] = "no_data"
+            except InumetApiClientError as exception:
                 LOGGER.exception(exception)
                 _errors["base"] = "unknown"
             else:
@@ -59,15 +56,15 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     STATION,
                     ): vol.In([x['NombreEstacion'] for x in stations['estaciones']]),
                     vol.Required(
-                    ZONE,
-                    ): vol.In([x['nombre'] for x in zones['zonas']]),
+                    DEPTO,
+                    ): vol.In([x['nombre'] for x in deptos['deptos']]),
                 }
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, station: int, zone: int) -> None:
+    async def _test_credentials(self, station: int, depto: int) -> None:
         """Validate credentials."""
-        client = await self.hass.async_add_executor_job(INUMET,station,zone)
+        client = await self.hass.async_add_executor_job(INUMET,station,depto)
         if not await self.hass.async_add_executor_job(client._test):
-            raise ValueError
+            raise InumetApiClientNoDataError

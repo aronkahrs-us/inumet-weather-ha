@@ -1,0 +1,18 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "description": "Configuracion para Inumet, seleccione la estación mas cercana (informacion del tiempo) y su departamento (para alertas)",
+                "data": {
+                    "station": "Estación",
+                    "zone": "Zona"
+                }
+            }
+        },
+        "error": {
+            "no_data": "No hay información para esa estación.",
+            "connection": "Unable to connect to the server.",
+            "unknown": "Unknown error occurred."
+        }
+    }
+}

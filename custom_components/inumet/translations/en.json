@@ -4,13 +4,13 @@
             "user": {
                 "description": "If you need help with the configuration have a look here: https://github.com/ludeeus/integration_blueprint",
                 "data": {
-                    "station": "Estacion",
-                    "zone": "Zona"
+                    "station": "Station",
+                    "zone": "Zone"
                 }
             }
         },
         "error": {
-            "auth": "Username/Password is wrong.",
+            "no_data": "There is no data for that station",
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
         }
