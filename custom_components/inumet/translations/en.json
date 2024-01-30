@@ -2,10 +2,10 @@
     "config": {
         "step": {
             "user": {
-                "description": "If you need help with the configuration have a look here: https://github.com/ludeeus/integration_blueprint",
+                "description": "INumet Weather condifuration, select station and state.",
                 "data": {
                     "station": "Station",
-                    "zone": "Zone"
+                    "depto": "State"
                 }
             }
         },

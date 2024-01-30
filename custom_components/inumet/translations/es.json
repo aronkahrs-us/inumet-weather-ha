@@ -2,10 +2,10 @@
     "config": {
         "step": {
             "user": {
-                "description": "Configuracion para Inumet, seleccione la estación mas cercana (informacion del tiempo) y su departamento (para alertas)",
+                "description": "Configuracion para Inumet, seleccione la estación mas cercana (informacion del tiempo) y su departamento (para alertas).",
                 "data": {
                     "station": "Estación",
-                    "zone": "Zona"
+                    "depto": "Departamento"
                 }
             }
         },
