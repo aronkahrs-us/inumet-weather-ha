@@ -6,7 +6,7 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntityDescription,
 )
 
-from .const import DOMAIN
+from .const import DOMAIN, LOGGER
 from .coordinator import InumetDataUpdateCoordinator
 from .entity import InumetEntity
 import datetime as dt
@@ -56,25 +56,28 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         """Return true if the binary_sensor is on."""
         try:
             alerts = self.coordinator.data.get(self.entity_description.key)
-            _colores = ['','Amarilla','Naranja','Roja']
-            riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
-            descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
-            fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
-            self.extra_state_attributes = {
-                    "fenomeno": [x['fenomeno'] for x in alerts['advertencias']][0],
-                    "riesgoViento": riesgos["riesgoViento"],
-                    "riesgoLluvia": riesgos["riesgoLluvia"],
-                    "riesgoTormenta": riesgos["riesgoTormenta"],
-                    "riesgoVisibilidad": riesgos["riesgoVisibilidad"],
-                    "riesgoCalor": riesgos["riesgoCalor"],
-                    "riesgoFrio": riesgos["riesgoFrio"],
-                    "alertaColor": _colores[riesgos[max(riesgos, key=riesgos.get)]],
-                    "descripcion": descripcion,
-                }
-            zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
-            if self.coordinator.client.depto in zones and fechas['inicio'] < dt.datetime.now() < fechas['fin']:
-                return True
+            LOGGER.warning(alerts)
+            if len([x for x in alerts['advertencias']]) > 0:
+                _colores = ['','Amarilla','Naranja','Roja']
+                riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
+                descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
+                fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
+                self.extra_state_attributes = {
+                        "fenomeno": [x['fenomeno'] for x in alerts['advertencias']][0],
+                        "riesgoViento": riesgos["riesgoViento"],
+                        "riesgoLluvia": riesgos["riesgoLluvia"],
+                        "riesgoTormenta": riesgos["riesgoTormenta"],
+                        "riesgoVisibilidad": riesgos["riesgoVisibilidad"],
+                        "riesgoCalor": riesgos["riesgoCalor"],
+                        "riesgoFrio": riesgos["riesgoFrio"],
+                        "alertaColor": _colores[riesgos[max(riesgos, key=riesgos.get)]],
+                        "descripcion": descripcion,
+                    }
+                zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
+                if self.coordinator.client.depto in zones and fechas['inicio'] < dt.datetime.now() < fechas['fin']:
+                    return True
+                return False
             return False
         except Exception as e:
-            print('----EXCEPTION----',e)
+            LOGGER.warning(e)
             return False
