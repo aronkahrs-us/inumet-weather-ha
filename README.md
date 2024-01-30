@@ -37,7 +37,7 @@ Platform | Description
 
 [![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=inumet)
 
-[![Config flow](configimg)]
+![Config flow](https://github.com/aronkahrs-us/inumet-weather-ha/blob/main/step1.png?raw=true)
 <!---->
 
 ## Contributions are welcome!
@@ -57,4 +57,4 @@ If you want to contribute to this please read the [Contribution guidelines](CONT
 [maintenance-shield]: https://img.shields.io/badge/maintainer-Aron%20Kahrs-blue.svg?style=for-the-badge
 [releases-shield]: https://img.shields.io/github/release/aronkahrs-us/inumet-weather-ha.svg?style=for-the-badge
 [releases]: https://github.com/aronkahrs-us/inumet-weather-ha/releases
-[configimg]: (https://github.com/aronkahrs-us/inumet-weather-ha/blob/main/step.jpg?raw=true)
+[configimg]: (https://github.com/aronkahrs-us/inumet-weather-ha/blob/main/step1.png)
