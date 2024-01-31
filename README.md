@@ -15,7 +15,7 @@ Platform | Description
 -- | --
 `binary_sensor` | Show acrive alerts.
 `sensor` | Show Weather info.
-`wheater` | Wheater sensor with forecast.
+`weather` | Wheater sensor with forecast.
 
 ## Installation
 
