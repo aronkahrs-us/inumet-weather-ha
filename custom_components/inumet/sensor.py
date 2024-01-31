@@ -1,4 +1,4 @@
-"""Sensor platform for integration_blueprint."""
+"""Sensor platform for Inumet."""
 from __future__ import annotations
 
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription, SensorDeviceClass
@@ -59,7 +59,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
 
 
 class InumetSensor(InumetEntity, SensorEntity):
-    """integration_blueprint Sensor class."""
+    """Inumet Sensor class."""
 
     def __init__(
         self,

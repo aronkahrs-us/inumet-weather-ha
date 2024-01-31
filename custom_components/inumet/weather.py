@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 from homeassistant.const import STATE_UNAVAILABLE
 
 from homeassistant.components.weather import (
@@ -24,7 +24,7 @@ from homeassistant.const import (
     UnitOfTemperature,
 )
 
-from .const import DOMAIN
+from .const import DOMAIN, ATTRIBUTION
 from .coordinator import InumetDataUpdateCoordinator
 from .entity import InumetEntity
 
@@ -35,7 +35,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry, async_add_e
 
 
 class InumetWeather(InumetEntity, WeatherEntity):
-    """integration_blueprint Sensor class."""
+    """Inumet Sensor class."""
 
     def __init__(
         self,
@@ -50,7 +50,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         self._attr_native_visibility_unit = UnitOfLength.KILOMETERS
         self._attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
         self._attr_unique_id = f"WeatherInumet_{self.coordinator.data['estado'].get('id')}"
-        self._attr_attribution = "Data provided by INUMET"
+        self._attr_attribution = ATTRIBUTION
         if len(self.coordinator.data['pronostico']) >= 0:
             self._attr_supported_features = WeatherEntityFeature.FORECAST_DAILY
 
@@ -82,7 +82,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
             elif estado == 18:
                 condition = 'exceptional'
             return condition
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -97,7 +97,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
             elif data == "Cubierto":
                 coverage = 100
             return coverage
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -105,14 +105,14 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the temperature."""
         try:
             return float(self.coordinator.data['estado'].get('temperatura'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
     @property
     def native_pressure(self) -> float:
         """Return the pressure."""
         try:
             return float(self.coordinator.data['estado'].get('presion'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -120,7 +120,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the dew point."""
         try:
             return float(self.coordinator.data['estado'].get('temperaturaPuntoRocio'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -128,7 +128,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the humidity."""
         try:
             return float(self.coordinator.data['estado'].get('humedad'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -136,7 +136,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the wind gust speed."""
         try:
             return float(self.coordinator.data['estado'].get('intRafaga').replace('-','0'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -144,7 +144,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the wind speed."""
         try:
             return float(self.coordinator.data['estado'].get('intViento').replace('-','0'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -152,7 +152,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the wind bearing."""
         try:
             return float(self.coordinator.data['estado'].get('dirViento').replace('-','0'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     @property
@@ -160,7 +160,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         """Return the visibility."""
         try:
             return float(self.coordinator.data['estado'].get('visibilidad').replace('-','0'))
-        except:
+        except Exception:
             return STATE_UNAVAILABLE
 
     async def async_forecast_daily(self) -> list[Forecast] | None:
@@ -178,5 +178,5 @@ class InumetWeather(InumetEntity, WeatherEntity):
                 }
                 for item in self.coordinator.data['pronostico']
             ]
-        except:
+        except Exception:
             return STATE_UNAVAILABLE

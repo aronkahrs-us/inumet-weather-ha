@@ -1,11 +1,12 @@
-"""Constants for integration_blueprint."""
+"""Constants for Inumet."""
 from logging import Logger, getLogger
 
 LOGGER: Logger = getLogger(__package__)
 
 NAME = "Inumet"
 DOMAIN = "inumet"
-VERSION = "0.0.1"
-ATTRIBUTION = "Data provided by http://jsonplaceholder.typicode.com/"
+MANUFACTURER: str = "Aron Kahrs"
+VERSION = "0.3.0"
+ATTRIBUTION = "Data provided by Inumet"
 STATION = "station"
 DEPTO = "depto"

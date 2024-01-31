@@ -12,8 +12,8 @@ from .api import (
 )
 from .const import DOMAIN, LOGGER, STATION, DEPTO
 
-class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
-    """Config flow for Blueprint."""
+class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
+    """Config flow for Inumet."""
 
     VERSION = 1
 
@@ -54,10 +54,10 @@ class BlueprintFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 {
                     vol.Required(
                     STATION,
-                    ): vol.In([x['NombreEstacion'] for x in stations['estaciones']]),
+                    ): vol.In([x['NombreEstacion'] for x in stations]),
                     vol.Required(
                     DEPTO,
-                    ): vol.In([x['nombre'] for x in deptos['deptos']]),
+                    ): vol.In([x['nombre'] for x in deptos]),
                 }
             ),
             errors=_errors,
