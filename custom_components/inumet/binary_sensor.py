@@ -60,7 +60,10 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
                 _colores = ['','Amarilla','Naranja','Roja']
                 riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
                 descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
-                fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
+                if self.entity_description.key == 'advertencias':
+                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d %H:%M'))} for x in alerts['advertencias']][0]
+                else:
+                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
                 self.extra_state_attributes = {
                         "Fenomeno": [x['fenomeno'] for x in alerts['advertencias']][0],
                         "Riesgo Viento": riesgos["riesgoViento"],
