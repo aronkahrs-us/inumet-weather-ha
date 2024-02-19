@@ -82,9 +82,6 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
                         "Fin": fechas['fin'],
                     }
                 zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
-                LOGGER.warning(zones)
-                print(fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz))
-                print(fechas['inicio'].replace(tzinfo=self._tz), pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz), fechas['fin'].replace(tzinfo=self._tz))
                 if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
                     return True
                 else:
