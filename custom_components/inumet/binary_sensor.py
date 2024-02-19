@@ -10,6 +10,7 @@ from .const import DOMAIN, LOGGER, ATTRIBUTION
 from .coordinator import InumetDataUpdateCoordinator
 from .entity import InumetEntity
 import datetime as dt
+import pytz
 
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
@@ -32,6 +33,7 @@ async def async_setup_entry(hass, entry, async_add_devices):
         InumetBinarySensor(
             coordinator=coordinator,
             entity_description=entity_description,
+            tz=hass.config.time_zone
         )
         for entity_description in ENTITY_DESCRIPTIONS
     )
@@ -44,12 +46,14 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         self,
         coordinator: InumetDataUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
+        tz
     ) -> None:
         """Initialize the binary_sensor class."""
         super().__init__(coordinator)
         self.entity_description = entity_description
         self._attr_attribution = ATTRIBUTION
         self._attr_unique_id = f"{DOMAIN}_{self.entity_description.key}_{self.coordinator.data['estado'].get('id')}"
+        self._tz=pytz.timezone(tz)
 
     @property
     def is_on(self) -> bool:
@@ -57,7 +61,7 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         try:
             alerts = self.coordinator.data.get(self.entity_description.key)
             if len(list(alerts['advertencias'])) > 0:
-                _colores = ['','Amarilla','Naranja','Roja']
+                _colores = ['','','Amarilla','Naranja','Roja']
                 riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
                 descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
                 if self.entity_description.key == 'advertencias':
@@ -78,10 +82,15 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
                         "Fin": fechas['fin'],
                     }
                 zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
-                if self.coordinator.client.depto in zones and fechas['inicio'] < dt.datetime.now() < fechas['fin']:
+                LOGGER.warning(zones)
+                print(fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz))
+                print(fechas['inicio'].replace(tzinfo=self._tz), pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz), fechas['fin'].replace(tzinfo=self._tz))
+                if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
                     return True
+                else:
+                    return False
+            else:
                 return False
-            return False
         except Exception as e:
             LOGGER.warning(e)
             return False
