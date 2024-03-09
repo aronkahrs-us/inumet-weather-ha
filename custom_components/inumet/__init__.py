@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import  Platform
 from homeassistant.core import HomeAssistant
 
-from .api import INUMET
+from inumet_api import INUMET
 from .const import DOMAIN, STATION, DEPTO
 from .coordinator import InumetDataUpdateCoordinator
 

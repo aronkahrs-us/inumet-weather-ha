@@ -8,9 +8,10 @@ from .api import (
     InumetApiClientAuthenticationError,
     InumetApiClientNoDataError,
     InumetApiClientError,
-    INUMET
 )
 from .const import DOMAIN, LOGGER, STATION, DEPTO
+
+from inumet_api import INUMET
 
 class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Inumet."""

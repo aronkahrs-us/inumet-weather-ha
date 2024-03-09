@@ -13,11 +13,11 @@ from homeassistant.exceptions import ConfigEntryAuthFailed
 
 from .api import (
     InumetApiClientAuthenticationError,
-    InumetApiClientError,
-    INUMET
+    InumetApiClientError
 )
 from .const import DOMAIN, LOGGER
 
+from inumet_api import INUMET
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
 class InumetDataUpdateCoordinator(DataUpdateCoordinator):
