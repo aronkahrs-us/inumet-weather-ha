@@ -60,32 +60,33 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         """Return true if the binary_sensor is on."""
         try:
             alerts = self.coordinator.data.get(self.entity_description.key)
-            if len(list(alerts['advertencias'])) > 0:
-                _colores = ['','','Amarilla','Naranja','Roja']
-                riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
-                descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
-                if self.entity_description.key == 'advertencias':
-                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d %H:%M'))} for x in alerts['advertencias']][0]
-                else:
-                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
-                self.extra_state_attributes = {
-                        "Fenomeno": [x['fenomeno'] for x in alerts['advertencias']][0],
-                        "Riesgo Viento": riesgos["riesgoViento"],
-                        "Riesgo Lluvia": riesgos["riesgoLluvia"],
-                        "Riesgo Tormenta": riesgos["riesgoTormenta"],
-                        "Riesgo Visibilidad": riesgos["riesgoVisibilidad"],
-                        "Riesgo Calor": riesgos["riesgoCalor"],
-                        "Riesgo Frio": riesgos["riesgoFrio"],
-                        "Color Alerta": _colores[riesgos[max(riesgos, key=riesgos.get)]],
-                        "Descripcion": descripcion,
-                        "Inicio": fechas['inicio'],
-                        "Fin": fechas['fin'],
-                    }
-                zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
-                if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
-                    return True
-                else:
-                    return False
+            if len(list(alerts.get(self.entity_description.key))) > 0:
+                for alert in list(alerts.get(self.entity_description.key)):
+                    _colores = ['','','Amarilla','Naranja','Roja']
+                    riesgos = alert.get('riesgoFenomeno')
+                    descripcion = alert['descripcion']
+                    if self.entity_description.key == 'advertencias':
+                        fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d %H:%M'))}
+                    else:
+                        fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))}
+                    self.extra_state_attributes = {
+                            "Fenomeno": [x['fenomeno'] for x in alerts.get(self.entity_description.key)][0],
+                            "Riesgo Viento": riesgos["riesgoViento"],
+                            "Riesgo Lluvia": riesgos["riesgoLluvia"],
+                            "Riesgo Tormenta": riesgos["riesgoTormenta"],
+                            "Riesgo Visibilidad": riesgos["riesgoVisibilidad"],
+                            "Riesgo Calor": riesgos["riesgoCalor"],
+                            "Riesgo Frio": riesgos["riesgoFrio"],
+                            "Color Alerta": _colores[riesgos[max(riesgos, key=riesgos.get)]],
+                            "Descripcion": descripcion,
+                            "Inicio": fechas['inicio'],
+                            "Fin": fechas['fin'],
+                        }
+                    zones = [i['label'] for i in alert['zonasArray']]
+                    if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
+                        return True
+                    else:
+                        return False
             else:
                 return False
         except Exception as e:

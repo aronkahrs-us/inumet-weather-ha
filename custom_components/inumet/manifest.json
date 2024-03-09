@@ -8,6 +8,8 @@
   "documentation": "https://github.com/aronkahrs-us/inumet-weather-ha",
   "iot_class": "cloud_polling",
   "issue_tracker": "https://github.com/aronkahrs-us/inumet-weather-ha/issues",
-  "requirements": ["inumet_api==0.1.8"],
-  "version": "0.3.2"
+  "requirements": [
+    "inumet_api==0.1.8"
+  ],
+  "version": "0.3.3"
 }

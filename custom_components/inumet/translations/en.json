@@ -2,7 +2,7 @@
     "config": {
         "step": {
             "user": {
-                "description": "Iumet Weather configuration, select station and state.",
+                "description": "Inumet Weather configuration, select station and state.",
                 "data": {
                     "station": "Station",
                     "depto": "State"
