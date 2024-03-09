@@ -69,7 +69,9 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
                         fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d %H:%M'))}
                     else:
                         fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))}
-                    self.extra_state_attributes = {
+                    zones = [i['label'] for i in alert['zonasArray']]
+                    if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
+                        self.extra_state_attributes = {
                             "Fenomeno": [x['fenomeno'] for x in alerts.get(self.entity_description.key)][0],
                             "Riesgo Viento": riesgos["riesgoViento"],
                             "Riesgo Lluvia": riesgos["riesgoLluvia"],
@@ -82,11 +84,8 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
                             "Inicio": fechas['inicio'],
                             "Fin": fechas['fin'],
                         }
-                    zones = [i['label'] for i in alert['zonasArray']]
-                    if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
                         return True
-                    else:
-                        return False
+                return False
             else:
                 return False
         except Exception as e:
