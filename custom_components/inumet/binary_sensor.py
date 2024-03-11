@@ -62,7 +62,6 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
             alerts = self.coordinator.data.get(self.entity_description.key)
             if len(list(alerts.get('advertencias'))) > 0:
                 for alert in list(alerts.get('advertencias')):
-                    print(alert)
                     _colores = ['','','Amarilla','Naranja','Roja']
                     riesgos = alert.get('riesgoFenomeno')
                     descripcion = alert.get('descripcion')
