@@ -10,7 +10,7 @@ from homeassistant.const import  Platform, CONF_LATITUDE, CONF_LONGITUDE
 from homeassistant.core import HomeAssistant
 
 from inumet_api import INUMET
-from .const import DOMAIN, LOGGER
+from .const import DOMAIN
 from .coordinator import InumetDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [

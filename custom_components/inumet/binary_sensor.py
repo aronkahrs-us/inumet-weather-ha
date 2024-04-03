@@ -5,7 +5,6 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
-from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
 
 from .const import DOMAIN, LOGGER, ATTRIBUTION
 from .coordinator import InumetDataUpdateCoordinator
