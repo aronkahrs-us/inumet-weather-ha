@@ -29,9 +29,13 @@ class InumetDataUpdateCoordinator(DataUpdateCoordinator):
         self,
         hass: HomeAssistant,
         client: INUMET,
+        latitude,
+        longitude,
     ) -> None:
         """Initialize."""
         self.client = client
+        self.latitude = latitude
+        self.longitude = longitude
         super().__init__(
             hass=hass,
             logger=LOGGER,

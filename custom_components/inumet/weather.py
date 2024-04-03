@@ -49,7 +49,7 @@ class InumetWeather(InumetEntity, WeatherEntity):
         self._attr_native_temperature_unit = UnitOfTemperature.CELSIUS
         self._attr_native_visibility_unit = UnitOfLength.KILOMETERS
         self._attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
-        self._attr_unique_id = f"WeatherInumet_{self.coordinator.data['estado'].get('id')}"
+        self._attr_unique_id = f"{self.coordinator.client.stationName}"
         self._attr_attribution = ATTRIBUTION
         if len(self.coordinator.data['pronostico']) >= 0:
             self._attr_supported_features = WeatherEntityFeature.FORECAST_DAILY

@@ -6,7 +6,6 @@ LOGGER: Logger = getLogger(__package__)
 NAME = "Inumet"
 DOMAIN = "inumet"
 MANUFACTURER: str = "Aron Kahrs"
-VERSION = "0.3.5"
+VERSION = "0.4.0"
 ATTRIBUTION = "Data provided by Inumet"
-STATION = "station"
-DEPTO = "depto"
+

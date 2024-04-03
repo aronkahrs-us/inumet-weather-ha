@@ -3,20 +3,22 @@ from __future__ import annotations
 
 import voluptuous as vol
 from homeassistant import config_entries
+from homeassistant.const import CONF_LATITUDE, CONF_LONGITUDE
+import homeassistant.helpers.config_validation as cv
 
 from .api import (
     InumetApiClientAuthenticationError,
     InumetApiClientNoDataError,
     InumetApiClientError,
 )
-from .const import DOMAIN, LOGGER, STATION, DEPTO
+from .const import DOMAIN, LOGGER
 
 from inumet_api import INUMET
 
 class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Inumet."""
 
-    VERSION = 1
+    VERSION = 2
 
     async def async_step_user(
         self,
@@ -24,14 +26,11 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> config_entries.FlowResult:
         """Handle a flow initialized by the user."""
         _errors = {}
-        temp_client = await self.hass.async_add_executor_job(INUMET)
-        stations = await self.hass.async_add_executor_job(temp_client.estaciones)
-        deptos = await self.hass.async_add_executor_job(temp_client.departamentos)
         if user_input is not None:
             try:
                 await self._test_credentials(
-                    station=user_input.get(STATION),
-                    depto=user_input.get(DEPTO),
+                    lat=user_input.get(CONF_LATITUDE),
+                    long=user_input.get(CONF_LONGITUDE)
                 )
 
             except InumetApiClientAuthenticationError as exception:
@@ -45,7 +44,7 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 _errors["base"] = "unknown"
             else:
                 return self.async_create_entry(
-                    title=user_input[STATION],
+                    title=f'{self.client.stationName}',
                     data=user_input,
                 )
 
@@ -54,18 +53,18 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                    STATION,
-                    ): vol.In([x['NombreEstacion'] for x in stations]),
+                        CONF_LATITUDE, default=self.hass.config.latitude
+                    ): cv.latitude,
                     vol.Required(
-                    DEPTO,
-                    ): vol.In([x['nombre'] for x in deptos]),
+                        CONF_LONGITUDE, default=self.hass.config.longitude
+                    ): cv.longitude,
                 }
             ),
             errors=_errors,
         )
 
-    async def _test_credentials(self, station: int, depto: int) -> None:
+    async def _test_credentials(self, lat: float, long: float) -> None:
         """Validate credentials."""
-        client = await self.hass.async_add_executor_job(INUMET,station,depto)
-        if not await self.hass.async_add_executor_job(client._test):
+        self.client = await self.hass.async_add_executor_job(INUMET,lat,long)
+        if not await self.hass.async_add_executor_job(self.client._test):
             raise InumetApiClientNoDataError
