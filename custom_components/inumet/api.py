@@ -1,6 +1,5 @@
 """Sample API Client."""
 from __future__ import annotations
-from inumet_api import INUMET
 
 class InumetApiClientError(Exception):
     """Exception to indicate a general API error."""

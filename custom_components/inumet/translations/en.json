@@ -2,10 +2,10 @@
     "config": {
         "step": {
             "user": {
-                "description": "Iumet Weather configuration, select station and state.",
+                "description": "Inumet Weather configuration, insert Latitude and Longitude to obtain station and show alerts (defaults to Home Assistant instance Latitude and Longitude)",
                 "data": {
-                    "station": "Station",
-                    "depto": "State"
+                    "latitude": "Latitude",
+                    "longitude": "Longitude"
                 }
             }
         },

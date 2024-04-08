@@ -12,6 +12,9 @@ from .entity import InumetEntity
 import datetime as dt
 import pytz
 
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+
 ENTITY_DESCRIPTIONS = (
     BinarySensorEntityDescription(
         key="advertencias",
@@ -33,7 +36,9 @@ async def async_setup_entry(hass, entry, async_add_devices):
         InumetBinarySensor(
             coordinator=coordinator,
             entity_description=entity_description,
-            tz=hass.config.time_zone
+            tz=hass.config.time_zone,
+            lat=coordinator.latitude,
+            long=coordinator.longitude,
         )
         for entity_description in ENTITY_DESCRIPTIONS
     )
@@ -46,7 +51,9 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         self,
         coordinator: InumetDataUpdateCoordinator,
         entity_description: BinarySensorEntityDescription,
-        tz
+        tz,
+        lat,
+        long
     ) -> None:
         """Initialize the binary_sensor class."""
         super().__init__(coordinator)
@@ -54,38 +61,40 @@ class InumetBinarySensor(InumetEntity, BinarySensorEntity):
         self._attr_attribution = ATTRIBUTION
         self._attr_unique_id = f"{DOMAIN}_{self.entity_description.key}_{self.coordinator.data['estado'].get('id')}"
         self._tz=pytz.timezone(tz)
+        self.lat = lat
+        self.long = long
 
     @property
     def is_on(self) -> bool:
         """Return true if the binary_sensor is on."""
         try:
             alerts = self.coordinator.data.get(self.entity_description.key)
-            if len(list(alerts['advertencias'])) > 0:
-                _colores = ['','','Amarilla','Naranja','Roja']
-                riesgos = [x['riesgoFenomeno'] for x in alerts['advertencias']][0]
-                descripcion = [x['descripcion'] for x in alerts['advertencias']][0]
-                if self.entity_description.key == 'advertencias':
-                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d %H:%M'))} for x in alerts['advertencias']][0]
-                else:
-                    fechas = [{'inicio':dt.datetime.strptime(x['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(x['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))} for x in alerts['advertencias']][0]
-                self.extra_state_attributes = {
-                        "Fenomeno": [x['fenomeno'] for x in alerts['advertencias']][0],
-                        "Riesgo Viento": riesgos["riesgoViento"],
-                        "Riesgo Lluvia": riesgos["riesgoLluvia"],
-                        "Riesgo Tormenta": riesgos["riesgoTormenta"],
-                        "Riesgo Visibilidad": riesgos["riesgoVisibilidad"],
-                        "Riesgo Calor": riesgos["riesgoCalor"],
-                        "Riesgo Frio": riesgos["riesgoFrio"],
-                        "Color Alerta": _colores[riesgos[max(riesgos, key=riesgos.get)]],
-                        "Descripcion": descripcion,
-                        "Inicio": fechas['inicio'],
-                        "Fin": fechas['fin'],
-                    }
-                zones = [[i['label'] for i in x['zonasArray']] for x in alerts['advertencias']][0]
-                if self.coordinator.client.depto in zones and fechas['inicio'].replace(tzinfo=self._tz) < pytz.utc.localize(dt.datetime.now(), is_dst=None).astimezone(self._tz) < fechas['fin'].replace(tzinfo=self._tz):
-                    return True
-                else:
-                    return False
+            if len(list(alerts.get('advertencias'))) > 0:
+                for alert in list(alerts.get('advertencias')):
+                    _colores = ['','','Amarilla','Naranja','Roja']
+                    riesgos = alert.get('riesgoFenomeno')
+                    descripcion = alert.get('descripcion')
+                    if self.entity_description.key == 'advertencias':
+                        fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d %H:%M'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d %H:%M'))}
+                    else:
+                        fechas = {'inicio':dt.datetime.strptime(alert['comienzo'],'%Y-%m-%d'),'fin':(dt.datetime.strptime(alert['finalizacion'],'%Y-%m-%d')+ dt.timedelta(days=1))}
+                    alertPoly = Polygon([(a.get('lat'),a.get('lng')) for x in alert.get('coordsPoligonos') for a in x])
+                    if alertPoly.contains(Point(self.lat,self.long)) and fechas['inicio'].replace(tzinfo=self._tz) < dt.datetime.now(self._tz).replace(tzinfo=self._tz) < fechas['fin'].replace(tzinfo=self._tz):
+                        self.extra_state_attributes = {
+                            "Fenomeno": alert['fenomeno'],
+                            "Riesgo Viento": riesgos["riesgoViento"],
+                            "Riesgo Lluvia": riesgos["riesgoLluvia"],
+                            "Riesgo Tormenta": riesgos["riesgoTormenta"],
+                            "Riesgo Visibilidad": riesgos["riesgoVisibilidad"],
+                            "Riesgo Calor": riesgos["riesgoCalor"],
+                            "Riesgo Frio": riesgos["riesgoFrio"],
+                            "Color Alerta": _colores[riesgos[max(riesgos, key=riesgos.get)]],
+                            "Descripcion": descripcion,
+                            "Inicio": fechas['inicio'],
+                            "Fin": fechas['fin'],
+                        }
+                        return True
+                return False
             else:
                 return False
         except Exception as e:
