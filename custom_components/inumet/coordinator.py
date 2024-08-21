@@ -31,6 +31,7 @@ class InumetDataUpdateCoordinator(DataUpdateCoordinator):
         client: INUMET,
         latitude,
         longitude,
+        update_interval
     ) -> None:
         """Initialize."""
         self.client = client
@@ -40,7 +41,7 @@ class InumetDataUpdateCoordinator(DataUpdateCoordinator):
             hass=hass,
             logger=LOGGER,
             name=DOMAIN,
-            update_interval=timedelta(minutes=5),
+            update_interval=timedelta(minutes=update_interval),
         )
 
     async def _async_update_data(self):

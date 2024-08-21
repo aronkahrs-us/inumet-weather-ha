@@ -5,7 +5,8 @@
                 "description": "Inumet Weather configuration, insert Latitude and Longitude to obtain station and show alerts (defaults to Home Assistant instance Latitude and Longitude)",
                 "data": {
                     "latitude": "Latitude",
-                    "longitude": "Longitude"
+                    "longitude": "Longitude",
+                    "UPDATE_INTERVAL": "Update Interval (in minutes)"
                 }
             }
         },
@@ -13,6 +14,16 @@
             "no_data": "There is no data for that station",
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Inumet Weather configuration, change update interval.",
+                "data": {
+                    "UPDATE_INTERVAL": "Update Interval (in minutes)"
+                }
+            }
         }
     }
 }

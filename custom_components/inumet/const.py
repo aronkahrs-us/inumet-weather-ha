@@ -9,3 +9,4 @@ MANUFACTURER: str = "Aron Kahrs"
 VERSION = "0.4.0"
 ATTRIBUTION = "Data provided by Inumet"
 
+UPDATE_INTERVAL = 30

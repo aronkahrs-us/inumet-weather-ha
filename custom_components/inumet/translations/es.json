@@ -5,7 +5,8 @@
                 "description": "Configuración para Inumet, inserte Latitud y Longitud para obtener estacion mas cercana y chequear alertas (por defecto se usa la latitud y longitud de la instancia de Home Assistant)",
                 "data": {
                     "latitude": "Latitud",
-                    "longitude": "Longitud"
+                    "longitude": "Longitud",
+                    "UPDATE_INTERVAL": "Minutos entre actualización"
                 }
             }
         },
@@ -13,6 +14,14 @@
             "no_data": "No hay información para esa estación.",
             "connection": "Unable to connect to the server.",
             "unknown": "Unknown error occurred."
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "description": "Configuración para Inumet,cambie el tiempo entre actualizaiones.",
+                "data": {"UPDATE_INTERVAL": "Minutos entre actualización"}
+            }
         }
     }
 }

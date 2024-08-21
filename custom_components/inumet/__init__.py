@@ -29,6 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         client=await hass.async_add_executor_job(INUMET,entry.data[CONF_LATITUDE],entry.data[CONF_LONGITUDE]),
         latitude=entry.data[CONF_LATITUDE],
         longitude=entry.data[CONF_LONGITUDE],
+        update_interval=entry.data['UPDATE_INTERVAL'],
     )
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
     await coordinator.async_config_entry_first_refresh()
