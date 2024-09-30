@@ -13,7 +13,7 @@
 
 Platform | Description
 -- | --
-`binary_sensor` | Show acrive alerts.
+`binary_sensor` | Show active alerts.
 `sensor` | Show Weather info.
 `weather` | Weather sensor with forecast.
 
@@ -39,6 +39,12 @@ Platform | Description
 
 ![Config flow](https://github.com/aronkahrs-us/inumet-weather-ha/blob/main/step1.png?raw=true)
 <!---->
+
+## Optional Blueprint for alert notifications
+
+This blueprint makes automating alert notifications easy.
+
+[![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgist.github.com%2Faronkahrs-us%2Fbf65d2b4c112a2bc77e3c2866f611936)
 
 ## Contributions are welcome!
 
