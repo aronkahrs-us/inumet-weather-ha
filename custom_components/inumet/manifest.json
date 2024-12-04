@@ -11,8 +11,8 @@
   "requirements": [
     "inumet_api==0.2.1",
     "unidecode==1.3.8",
-    "scipy==1.12.0",
-    "shapely==2.0.3"
+    "scipy==1.14.1",
+    "shapely==2.0.6"
   ],
   "version": "0.4.1"
 }
