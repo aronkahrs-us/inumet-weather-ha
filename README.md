@@ -16,6 +16,7 @@ Platform | Description
 `binary_sensor` | Show active alerts.
 `sensor` | Show Weather info.
 `weather` | Weather sensor with forecast.
+`image` | Shows a map with the active alerts.
 
 ## Installation
 

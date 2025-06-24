@@ -1,4 +1,4 @@
-"""Adds config flow for Blueprint."""
+"""Adds config flow for Inumet."""
 from __future__ import annotations
 from typing import Any
 

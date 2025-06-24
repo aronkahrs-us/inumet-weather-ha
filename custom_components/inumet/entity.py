@@ -1,4 +1,4 @@
-"""BlueprintEntity class."""
+"""InumetEntity class."""
 from __future__ import annotations
 
 from homeassistant.helpers.entity import DeviceInfo
@@ -9,7 +9,7 @@ from .coordinator import InumetDataUpdateCoordinator
 
 
 class InumetEntity(CoordinatorEntity):
-    """BlueprintEntity class."""
+    """InumetEntity class."""
 
     _attr_attribution = ATTRIBUTION
 
