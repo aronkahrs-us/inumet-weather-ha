@@ -1,8 +1,8 @@
 colorlog==6.9.0
 homeassistant==2025.2.4
 pip>=21.0,<25.3
-ruff==0.13.2
+ruff==0.13.3
 inumet_api==0.2.2
 unidecode==1.4.0
 scipy==1.16.2
-shapely==2.0.7
+shapely==2.1.2
