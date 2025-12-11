@@ -1,13 +1,18 @@
 """Sensor platform for Inumet."""
+
 from __future__ import annotations
 
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription, SensorDeviceClass
+from homeassistant.components.sensor import (
+    SensorEntity,
+    SensorEntityDescription,
+    SensorDeviceClass,
+)
 
 from homeassistant.const import (
     UnitOfTemperature,
     UnitOfPressure,
     UnitOfSpeed,
-    PERCENTAGE
+    PERCENTAGE,
 )
 
 from .const import DOMAIN
@@ -20,28 +25,28 @@ ENTITY_DESCRIPTIONS = [
         name="Temperatura",
         icon="mdi:thermometer",
         device_class=SensorDeviceClass.TEMPERATURE,
-        native_unit_of_measurement=UnitOfTemperature.CELSIUS
+        native_unit_of_measurement=UnitOfTemperature.CELSIUS,
     ),
     SensorEntityDescription(
         key="humedad",
         name="Humedad",
         icon="mdi:water-percent",
         device_class=SensorDeviceClass.HUMIDITY,
-        native_unit_of_measurement=PERCENTAGE
+        native_unit_of_measurement=PERCENTAGE,
     ),
     SensorEntityDescription(
         key="presion",
         name="Presion",
         icon="mdi:gauge",
         device_class=SensorDeviceClass.ATMOSPHERIC_PRESSURE,
-        native_unit_of_measurement=UnitOfPressure.HPA
+        native_unit_of_measurement=UnitOfPressure.HPA,
     ),
     SensorEntityDescription(
         key="intViento",
         name="Intensidad Viento",
         icon="mdi:weather-windy",
         device_class=SensorDeviceClass.WIND_SPEED,
-        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR
+        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
     ),
 ]
 
@@ -74,4 +79,4 @@ class InumetSensor(InumetEntity, SensorEntity):
     @property
     def native_value(self) -> str:
         """Return the native value of the sensor."""
-        return self.coordinator.data['estado'].get(self.entity_description.key)
+        return self.coordinator.data["estado"].get(self.entity_description.key)

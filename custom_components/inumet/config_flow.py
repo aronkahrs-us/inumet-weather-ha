@@ -1,4 +1,5 @@
 """Adds config flow for Inumet."""
+
 from __future__ import annotations
 from typing import Any
 
@@ -18,6 +19,7 @@ from .const import DOMAIN, LOGGER, UPDATE_INTERVAL
 
 from inumet_api import INUMET
 
+
 class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
     """Config flow for Inumet."""
 
@@ -33,7 +35,7 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 await self._test_credentials(
                     lat=user_input.get(CONF_LATITUDE),
-                    long=user_input.get(CONF_LONGITUDE)
+                    long=user_input.get(CONF_LONGITUDE),
                 )
 
             except InumetApiClientAuthenticationError as exception:
@@ -47,7 +49,7 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                 _errors["base"] = "unknown"
             else:
                 return self.async_create_entry(
-                    title=f'{self.client.stationName}',
+                    title=f"{self.client.stationName}",
                     data=user_input,
                 )
 
@@ -61,9 +63,7 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required(
                         CONF_LONGITUDE, default=self.hass.config.longitude
                     ): cv.longitude,
-                    vol.Required(
-                        "UPDATE_INTERVAL", default=UPDATE_INTERVAL
-                    ): int,
+                    vol.Required("UPDATE_INTERVAL", default=UPDATE_INTERVAL): int,
                 }
             ),
             errors=_errors,
@@ -71,7 +71,7 @@ class InumetFlowHandler(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def _test_credentials(self, lat: float, long: float) -> None:
         """Validate credentials."""
-        self.client = await self.hass.async_add_executor_job(INUMET,lat,long)
+        self.client = await self.hass.async_add_executor_job(INUMET, lat, long)
         if not await self.hass.async_add_executor_job(self.client._test):
             raise InumetApiClientNoDataError
 
@@ -89,7 +89,7 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
 
     def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
         """Initialize options flow."""
-        self.config_entry = config_entry
+        self._config_entry = config_entry
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -110,7 +110,8 @@ class OptionsFlowHandler(config_entries.OptionsFlow):
             data_schema=vol.Schema(
                 {
                     vol.Required(
-                        "UPDATE_INTERVAL", default=self.config_entry.data.get("UPDATE_INTERVAL")
+                        "UPDATE_INTERVAL",
+                        default=self.config_entry.data.get("UPDATE_INTERVAL"),
                     ): int,
                 }
             ),

@@ -3,10 +3,11 @@
 For more details about this integration, please refer to
 https://github.com/aronkahrs-us/inumet-weather-ha
 """
+
 from __future__ import annotations
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import  Platform, CONF_LATITUDE, CONF_LONGITUDE
+from homeassistant.const import Platform, CONF_LATITUDE, CONF_LONGITUDE
 from homeassistant.core import HomeAssistant
 
 from inumet_api import INUMET
@@ -27,10 +28,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     hass.data.setdefault(DOMAIN, {})
     hass.data[DOMAIN][entry.entry_id] = coordinator = InumetDataUpdateCoordinator(
         hass=hass,
-        client=await hass.async_add_executor_job(INUMET,entry.data[CONF_LATITUDE],entry.data[CONF_LONGITUDE]),
+        client=await hass.async_add_executor_job(
+            INUMET, entry.data[CONF_LATITUDE], entry.data[CONF_LONGITUDE]
+        ),
         latitude=entry.data[CONF_LATITUDE],
         longitude=entry.data[CONF_LONGITUDE],
-        update_interval=entry.data['UPDATE_INTERVAL'],
+        update_interval=entry.data["UPDATE_INTERVAL"],
     )
     # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
     await coordinator.async_config_entry_first_refresh()

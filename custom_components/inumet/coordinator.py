@@ -1,4 +1,5 @@
 """DataUpdateCoordinator for Inumet."""
+
 from __future__ import annotations
 
 from datetime import timedelta
@@ -11,13 +12,11 @@ from homeassistant.helpers.update_coordinator import (
 )
 from homeassistant.exceptions import ConfigEntryAuthFailed
 
-from .api import (
-    InumetApiClientAuthenticationError,
-    InumetApiClientError
-)
+from .api import InumetApiClientAuthenticationError, InumetApiClientError
 from .const import DOMAIN, LOGGER
 
 from inumet_api import INUMET
+
 
 # https://developers.home-assistant.io/docs/integration_fetching_data#coordinated-single-api-poll-for-data-for-all-entities
 class InumetDataUpdateCoordinator(DataUpdateCoordinator):
@@ -26,12 +25,7 @@ class InumetDataUpdateCoordinator(DataUpdateCoordinator):
     config_entry: ConfigEntry
 
     def __init__(
-        self,
-        hass: HomeAssistant,
-        client: INUMET,
-        latitude,
-        longitude,
-        update_interval
+        self, hass: HomeAssistant, client: INUMET, latitude, longitude, update_interval
     ) -> None:
         """Initialize."""
         self.client = client
