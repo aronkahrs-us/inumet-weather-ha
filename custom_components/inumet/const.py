@@ -7,7 +7,7 @@ LOGGER: Logger = getLogger(__package__)
 NAME = "Inumet"
 DOMAIN = "inumet"
 MANUFACTURER: str = "Aron Kahrs"
-VERSION = "0.5.1"
+VERSION = "0.5.2"
 ATTRIBUTION = "Data provided by Inumet"
 
 UPDATE_INTERVAL = 30

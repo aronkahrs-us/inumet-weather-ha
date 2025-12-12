@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from homeassistant.components.image import ImageEntity, ImageEntityDescription
 from homeassistant.util import dt as dt_util
 from homeassistant.core import HomeAssistant
@@ -51,23 +52,16 @@ class InumetImage(InumetEntity, ImageEntity):
         self._attr_image_url: str = map_url
         self._attr_image_last_updated = dt_util.utcnow()
 
-    def _handle_coordinator_update(self) -> None:
-        """Handle updated data from the coordinator.
-
-        Update the image URL and last-updated timestamp so HA knows the
-        image changed when the coordinator fetches new data.
-        """
-        map_url = None
+    @property
+    def image_url(self) -> str | None:
+        """Return the image URL."""
         try:
             map_url = self.coordinator.data.get("advertencias").get("mapaMerge")  # type: ignore
+            return map_url
         except Exception:
-            map_url = None
+            return None
 
-        # Update the image URL if it changed, and always bump the
-        # `image_last_updated` so Home Assistant will re-fetch the image.
-        if map_url is not None and map_url != getattr(self, "_attr_image_url", None):
-            self._attr_image_url = map_url
-
-        self._attr_image_last_updated = dt_util.utcnow()
-
-        super()._handle_coordinator_update()
+    @property
+    def image_last_updated(self) -> datetime | None:
+        """Return the last updated time."""
+        return dt_util.utcnow()
