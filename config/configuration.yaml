@@ -1,6 +1,16 @@
 
-# Loads default set of integrations. Do not remove.
-default_config:
+# NOTE: In this repository's dev environment we avoid `default_config` because it
+# includes `go2rtc`, which is auto-managed only for Home Assistant OS/Container
+# installs and otherwise requires a working Docker setup.
+
+# Core services for a usable dev UI.
+api:
+
+http:
+
+config:
+
+lovelace:
 
 # Load frontend themes from the themes folder
 frontend:
