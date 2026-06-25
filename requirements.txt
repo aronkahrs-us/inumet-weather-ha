@@ -4,5 +4,5 @@ pip>=26.1.2,<26.2
 ruff==0.15.18
 inumet_api==0.2.2
 unidecode==1.4.0
-scipy==1.17.1
+scipy==1.18.0
 shapely==2.1.2
